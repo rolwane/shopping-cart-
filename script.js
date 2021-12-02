@@ -70,6 +70,12 @@ function addToCart(event) {
   }
 }
 
+document.querySelector('.empty-cart').addEventListener('click', () => {
+  localStorage.cartItems = '[]';
+  document.querySelector('.cart__items').innerHTML = '';
+  getTotalPrice()
+})
+
 window.onload = () => {
   getSavedCartItems(fetchItem, createCartItemElement, getTotalPrice);
   
