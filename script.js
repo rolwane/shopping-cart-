@@ -75,9 +75,24 @@ document.querySelector('.empty-cart').addEventListener('click', () => {
   getTotalPrice();
 });
 
+// Adiciona texto de carregamento antes da API mostrar as informações
+function addLoading() {
+  const p = document.createElement('p');
+  p.classList.add('loading');
+  p.innerText = 'carregando...';
+  document.querySelector('.items').appendChild(p);
+}
+
+// Remove o texto de carregamento
+function clearLoading() {
+  document.querySelector('.loading').remove();
+}
+
 window.onload = () => {
   // Atualiza o carrinho de compra caso tenha itens salvos
   getSavedCartItems(fetchItem, createCartItemElement, getTotalPrice);
+
+  addLoading();
 
   // Lista os produtos na tela
   fetchProducts().then((response) => {
@@ -85,5 +100,7 @@ window.onload = () => {
     response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
       items.appendChild(createProductItemElement({ sku, name, image }));
     });
+
+    clearLoading();
   });
 };
