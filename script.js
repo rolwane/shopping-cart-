@@ -1,3 +1,6 @@
+// Section onde é inserido todos os produtos
+const items = document.querySelector('.items');
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -40,4 +43,10 @@ function createCartItemElement({ sku, name, salePrice }) {
   return li;
 }
 
-window.onload = () => { };
+window.onload = () => {
+  fetchProducts('computador').then((response) => {
+    response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
+      items.appendChild(createProductItemElement({ sku, name, image }));
+    });
+  });
+};
