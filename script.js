@@ -95,7 +95,7 @@ window.onload = () => {
   addLoading();
 
   // Lista os produtos na tela
-  fetchProducts().then((response) => {
+  fetchProducts('computador').then((response) => {
     const items = document.querySelector('.items');
     response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
       items.appendChild(createProductItemElement({ sku, name, image }));
