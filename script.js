@@ -1,7 +1,7 @@
-// Section onde é inserido todos os produtos
+// section onde é inserido todos os produtos
 const items = document.querySelector('.items');
 
-// Lista onde é inserido os itens do carrinho
+// lista onde é inserido os itens do carrinho
 const ol = document.querySelector('.cart__items');
 
 function createProductImageElement(imageSource) {
@@ -35,16 +35,30 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+function getTotalPrice() {
+  const cartItems = Array.from(document.querySelectorAll('.cart__item'));
+
+  const totalPrice = cartItems.reduce((price, item) => {
+    const priceItem = Number(item.getAttribute('data-price'));
+    return price + priceItem;
+  }, 0);
+
+  document.querySelector('.total-price').innerText = totalPrice;
+}
+
 function removeCartItem(event) {
   if (event.target.className === 'cart__item') {
     event.target.remove();
     saveCartItems(ol.innerHTML);
+
+    getTotalPrice();
   }
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
+  li.setAttribute('data-price', salePrice);
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   return li;
 }
@@ -56,15 +70,23 @@ function addToCart(event) {
     fetchItem(itemID).then(({ id: sku, title: name, price: salePrice }) => {
       ol.appendChild(createCartItemElement({ sku, name, salePrice }));
       saveCartItems(ol.innerHTML);
+      
+      getTotalPrice();
     });
   }
 }
 
 window.onload = () => {
+  // adiciona eventListener nos itens do carrinho
   ol.addEventListener('click', removeCartItem);
 
+  // carrega o carrinho com os itens salvos
   ol.innerHTML = getSavedCartItems();
 
+  // atualiza o preço total
+  getTotalPrice();
+
+  // lista os produtos na tela
   fetchProducts('computador').then((response) => {
     response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
       items.appendChild(createProductItemElement({ sku, name, image }, addToCart));
