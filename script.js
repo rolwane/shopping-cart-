@@ -4,6 +4,9 @@ const items = document.querySelector('.items');
 // lista onde é inserido os itens do carrinho
 const ol = document.querySelector('.cart__items');
 
+// button de esvaziar carrinho
+const btnEmpty = document.querySelector('.empty-cart');
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -76,8 +79,24 @@ function addToCart(event) {
   }
 }
 
+function addLoading() {
+  const p = document.createElement('p');
+  p.classList.add('loading');
+  p.innerText = 'carregando...';
+  items.appendChild(p);
+}
+
+function removeLoading() {
+  document.querySelector('.loading').remove();
+}
+
+btnEmpty.addEventListener('click', () => {
+  ol.innerHTML = '';
+  localStorage.setItem('cartItems', '');
+  getTotalPrice();
+});
+
 window.onload = () => {
-  // adiciona eventListener nos itens do carrinho
   ol.addEventListener('click', removeCartItem);
 
   // carrega o carrinho com os itens salvos
@@ -86,8 +105,12 @@ window.onload = () => {
   // atualiza o preço total
   getTotalPrice();
 
+  // adiciona mensagem de carregamento
+  addLoading();
+
   // lista os produtos na tela
   fetchProducts('computador').then((response) => {
+    removeLoading();
     response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
       items.appendChild(createProductItemElement({ sku, name, image }, addToCart));
     });
