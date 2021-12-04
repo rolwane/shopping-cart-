@@ -36,14 +36,16 @@ function getSkuFromProductItem(item) {
 }
 
 function removeCartItem(event) {
-  event.target.remove();
+  if (event.target.className === 'cart__item') {
+    event.target.remove();
+    saveCartItems(ol.innerHTML);
+  }
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', removeCartItem);
   return li;
 }
 
@@ -53,11 +55,16 @@ function addToCart(event) {
 
     fetchItem(itemID).then(({ id: sku, title: name, price: salePrice }) => {
       ol.appendChild(createCartItemElement({ sku, name, salePrice }));
+      saveCartItems(ol.innerHTML);
     });
   }
 }
 
 window.onload = () => {
+  ol.addEventListener('click', removeCartItem);
+
+  ol.innerHTML = getSavedCartItems();
+
   fetchProducts('computador').then((response) => {
     response.results.forEach(({ id: sku, title: name, thumbnail: image }) => {
       items.appendChild(createProductItemElement({ sku, name, image }, addToCart));
